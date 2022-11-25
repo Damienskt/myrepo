@@ -6,7 +6,7 @@ function App() {
   const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
-    fetch("http://localhost:3001/api/message")
+    fetch("http://cfdsaserver-env-1.eba-ha4gw4mr.ap-southeast-1.elasticbeanstalk.com/api/message")
       .then((res) => res.json())
       .then((data) => setData(data.message));
   }, []);
