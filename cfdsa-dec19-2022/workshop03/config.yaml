@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cs-cm
+  labels:
+    app: codeserver
+    name: cs-cm
+  namespace: cs
+data:
+  PUID: "1000"
+  PGID: "1000"
+  TZ: Asia/Singapore
+  DEFAULT_WORKSPACE: /config/workspace
+#k get all,cm -l app=codeserver -ncs

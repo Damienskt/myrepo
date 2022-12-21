@@ -1,0 +1,81 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cs-deploy
+  labels:
+    app: codeserver
+  namespace: cs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cs-po
+      app: codeserver
+  template:
+    metadata:
+      name: cs-po
+      labels:
+        name: cs-po
+        app: codeserver
+    spec:
+      volumes:
+      - name: workspace-vol
+        persistentVolumeClaim:
+          claimName: cs-pvc
+      containers:
+      - name: cs-container
+        image: linuxserver/code-server:4.9.1
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: cs-cm
+        ports:
+        - containerPort: 8443
+        volumeMounts:
+        - name: workspace-vol
+          mountPath: /config/workspace
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cs-svc
+  labels:
+    name: cs-svc
+  namespace: cs
+spec:
+  type: ClusterIP
+  selector:
+      name: cs-po
+  ports:
+  - port: 8443 #service port where external will hit
+    targetPort: 8443 #container port where service will hit
+#k get ep -ncs to test
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cs-ing
+  labels:
+    name: cs-ing
+    app: codeserver
+  namespace: cs
+  annotations: 
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+    nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: cs-163.47.10.111.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: cs-svc
+            port:
+              number: 8443
+#k get ing -A  
+---
