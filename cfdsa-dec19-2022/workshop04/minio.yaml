@@ -6,7 +6,7 @@ metadata:
   labels:
     name: minio-hsvc
     app: minio
-  namespace: minions
+  namespace: minio
 spec:
   clusterIP: None
   selector: 
@@ -28,7 +28,7 @@ metadata:
   labels:
     name: minio-sts
     app: minio
-  namespace: minions
+  namespace: minio
 spec:
   serviceName: minio-hsvc
   replicas: 4
@@ -103,7 +103,7 @@ metadata:
   labels:
     name: minio-svc
     app: minio
-  namespace: minions
+  namespace: minio
 spec:
   type: ClusterIP
   selector:
@@ -124,7 +124,7 @@ metadata:
   labels:
     name: minio-ing
     app: minio
-  namespace: minions
+  namespace: minio
 spec:
   ingressClassName: nginx
   rules:
